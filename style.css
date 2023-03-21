@@ -1,7 +1,14 @@
+/* make all the body font arial*/
 body {
     font-family: Arial;
 }
 
-h1 {
+/* center the headers */
+h1, h2, h3 {
     text-align: center;
+}
+
+/* color the scatterplot points */
+.point, .point-border {
+fill:orangered;
 }

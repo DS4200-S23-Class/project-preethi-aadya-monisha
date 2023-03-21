@@ -15,7 +15,6 @@ const FRAME1 = d3.select("#vis1")
                     .attr("width", FRAME_WIDTH)
                     .attr("class", "frame"); 
 
-
 // read in  data
 d3.csv("data/food_retailers.csv").then((data) => { 
 
@@ -75,7 +74,74 @@ d3.csv("data/food_retailers.csv").then((data) => {
               "," + (MARGINS.top) + ")") 
         .call(d3.axisLeft(AMT_SCALE).ticks(10)) 
           .attr("font-size", '20px');
-
-
         
-});
+})
+
+// create a frame to add the svg in vis2 div
+const FRAME2 = d3.select("#vis2")
+    .append("svg")
+    .attr("height", FRAME_HEIGHT)
+    .attr("width", FRAME_WIDTH)
+    .attr("class", "frame");
+
+// read in the scatter plot data
+d3.csv("data/food_retailers.csv").then((DATA) => {
+
+  const MAX_X = d3.max(DATA, (d) => { return parseFloat(d.latitude); });
+
+ // the max Y used for scaling
+  const MIN_Y = d3.min(DATA, (d) => { return parseFloat(d.longitude); });
+
+  const X_SCALE = d3.scaleLinear()
+  .domain([41.2, (MAX_X) ])
+  .range([0, VIS_WIDTH])
+  const Y_SCALE = d3.scaleLinear()
+  .domain([(MIN_Y*-1), 69])
+  .range([0, VIS_HEIGHT]);
+
+
+	// Plots the data points on to the scatter plot 
+	FRAME2.selectAll("points")
+        .data(DATA)
+        .enter()
+        .append("circle")
+        .attr("cx", (d) => { return (X_SCALE(d.latitude) + MARGINS.left); })
+        .attr("cy", (d) => { return (Y_SCALE(d.longitude*-1) + MARGINS.top) ; })
+        .attr("r", 6)
+        .attr("class", "point");
+
+	// Adds the axises to the scatter plot 
+	FRAME2.append("g")
+		.attr("transform", "translate(" + MARGINS.left + "," + (VIS_HEIGHT + MARGINS.top) + ")")
+		.call(d3.axisBottom(X_SCALE).ticks(10))
+        .attr("font-size", "15px");
+	FRAME2.append("g")
+		.attr("transform", "translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
+		.call(d3.axisLeft(Y_SCALE).ticks(10))
+        .attr("font-size", "15px");
+
+    // displays the last point clicked text 
+    function pointClicked() {
+
+        let xCoord = d3.select(this).attr("cx");
+        let yCoord = d3.select(this).attr("cy");
+
+        xCoord = Math.round(X_SCALE.invert(xCoord - MARGINS.left));
+        yCoord = Math.round(Y_SCALE.invert(yCoord - MARGINS.top));
+        
+        document.getElementById("last_point").innerHTML = "Last Point Clicked: (" + xCoord + "," + yCoord + ")";
+
+        this.classList.toggle('point-border');
+    }
+
+        // FRAME2.append("circle")
+        //     .attr("cx", (d) => { return (X_SCALE(latitude) + MARGINS.left); })
+        //     .attr("cy", (d) => { return (Y_SCALE(longitude) + MARGINS.top) ; })
+        //     .attr("r", 6)
+        //     .attr("class", "point")
+        //     .on("click", pointClicked);
+    
+    // event listeners 
+    d3.selectAll(".point").on("click", pointClicked)
+  }); 
+
