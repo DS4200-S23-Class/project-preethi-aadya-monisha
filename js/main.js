@@ -19,6 +19,7 @@ const FRAME1 = d3.select("#vis1")
 // read in  data
 d3.csv("data/food_retailers.csv").then((data) => { 
   
+console.log(data);	
 
   // bar chart based on establishment type
   const color = d3.scaleOrdinal()
