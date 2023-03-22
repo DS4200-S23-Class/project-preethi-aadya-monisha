@@ -178,13 +178,6 @@ d3.csv("data/food_retailers.csv").then((DATA) => {
 
         this.classList.toggle('point-border');
     }
-
-        // FRAME2.append("circle")
-        //     .attr("cx", (d) => { return (X_SCALE(latitude) + MARGINS.left); })
-        //     .attr("cy", (d) => { return (Y_SCALE(longitude) + MARGINS.top) ; })
-        //     .attr("r", 6)
-        //     .attr("class", "point")
-        //     .on("click", pointClicked);
     
     // event listeners 
     d3.selectAll(".point").on("click", pointClicked)
