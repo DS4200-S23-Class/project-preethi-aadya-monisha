@@ -13,14 +13,15 @@ const FRAME1 = d3.select("#vis1")
                   .append("svg") 
                     .attr("height", FRAME_HEIGHT)   
                     .attr("width", FRAME_WIDTH)
-                    .attr("class", "frame"); 
+                    .attr("class", "frame");
 
   // create a frame to add the svg in vis2 div
 const FRAME2 = d3.select("#vis2")
     .append("svg")
     .attr("height", FRAME_HEIGHT)
     .attr("width", FRAME_WIDTH)
-    .attr("class", "frame");
+    .attr("class", "frame")
+
 
 
 // read in  data
@@ -134,12 +135,19 @@ console.log(data);
     const MIN_Y = d3.min(data, (d) => { return parseFloat(d.longitude); });
 
     const X_SCALE = d3.scaleLinear()
-    .domain([41.2, (MAX_X) ])
-    .range([0, VIS_WIDTH])
-    const Y_SCALE = d3.scaleLinear()
-    .domain([(MIN_Y*-1), 69])
-    .range([0, VIS_HEIGHT]);
+    .domain([(MAX_X), 41.2])
+    .range([0, VIS_WIDTH]);
 
+    const Y_SCALE = d3.scaleLinear()
+    .domain([69, (MIN_Y*-1)])
+    .range([VIS_HEIGHT, 0]);
+
+
+     let zoom = d3.zoom().on('zoom', handleZoom).scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+      .extent([[0, 0], [VIS_WIDTH, VIS_HEIGHT]]);
+      function handleZoom(event) {
+          FRAME2.attr('transform', event.transform);
+      };
 
     // Plots the data points on to the scatter plot 
     FRAME2.selectAll("points")
@@ -150,17 +158,24 @@ console.log(data);
           .attr("cy", (d) => { return (Y_SCALE(d.longitude*-1) + MARGINS.top) ; })
           .attr("r", 6)
           .attr("class", "point")
-          .style("fill", (d) => {return color(d.prim_type); });
+          .style("fill", (d) => {return color(d.prim_type); })
+          .call(zoom)
+          .append("g");
 
+
+   
+  
+   
+  
       // Adds the axises to the scatter plot 
-      FRAME2.append("g")
-        .attr("transform", "translate(" + MARGINS.left + "," + (VIS_HEIGHT + MARGINS.top) + ")")
-        .call(d3.axisBottom(X_SCALE).ticks(10))
-            .attr("font-size", "15px");
-      FRAME2.append("g")
-        .attr("transform", "translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
-        .call(d3.axisLeft(Y_SCALE).ticks(10))
-            .attr("font-size", "15px");
+      //FRAME2.append("g")
+        //.attr("transform", "translate(" + MARGINS.left + "," + (VIS_HEIGHT + MARGINS.top) + ")")
+        //.call(d3.axisBottom(X_SCALE).ticks(10))
+            //.attr("font-size", "15px");
+      //FRAME2.append("g")
+        //.attr("transform", "translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
+        //.call(d3.axisLeft(Y_SCALE).ticks(10))
+           // .attr("font-size", "15px");
 
 
       // create new variable for tooltip
