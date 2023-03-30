@@ -177,10 +177,10 @@ console.log(data);
 
 
        // Define event handler functions for tooltips/hovering
-    function handleMouseover(event, d) {
+    function handleMouseover2(event, d) {
 
       // on mouseover, make opaque 
-      TOOLTIP.style("opacity", 1);
+      TOOLTIP2.style("opacity", 1);
 
       // change bar color
       d3.select(this)
@@ -188,20 +188,20 @@ console.log(data);
 
     };
 
-    function handleMousemove(event, d) {
+    function handleMousemove2(event, d) {
 
       // position the tooltip and fill in information 
-      TOOLTIP.html("Store Name:" + d.name + "<br>Store Address:" + d.address +
+      TOOLTIP2.html("Store Name:" + d.name + "<br>Store Address:" + d.address +
                     "<br> Municipal:" + d.municipal + "<br>Type of Store: " + d.prim_type )
               .style("left", (event.pageX + 10) + "px") 
               .style("top", (event.pageY - 10) + "px"); 
      
     };
 
-    function handleMouseleave(event, d) {
+    function handleMouseleave2(event, d) {
 
       // on mouseleave, make transparant again 
-      TOOLTIP.style("opacity", 0); 
+      TOOLTIP2.style("opacity", 0); 
 
       //revert to original bar color
       d3.select(this)
@@ -210,9 +210,9 @@ console.log(data);
 
     // Add event listeners
     FRAME2.selectAll(".point")
-          .on("mouseover", handleMouseover) //add event listeners
-          .on("mousemove", handleMousemove)
-          .on("mouseleave", handleMouseleave);    
+          .on("mouseover", handleMouseover2) //add event listeners
+          .on("mousemove", handleMousemove2)
+          .on("mouseleave", handleMouseleave2);    
 
 
         
