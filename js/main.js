@@ -129,11 +129,14 @@ console.log(data);
           .on("mouseleave", handleMouseleave);    
 
 
+    // scattter plot of food establishments
+    // the max X used for scaling
     const MAX_X = d3.max(data, (d) => { return parseFloat(d.latitude); });
 
    // the max Y used for scaling
     const MIN_Y = d3.min(data, (d) => { return parseFloat(d.longitude); });
 
+  // set scales for x and y
     const X_SCALE = d3.scaleLinear()
     .domain([(MAX_X), 41.2])
     .range([0, VIS_WIDTH]);
@@ -143,8 +146,10 @@ console.log(data);
     .range([VIS_HEIGHT, 0]);
 
 
-     let zoom = d3.zoom().on('zoom', handleZoom).scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+     // set zoom for vis2 that calls the Zoom function
+      let zoom = d3.zoom().on('zoom', handleZoom).scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
       .extent([[0, 0], [VIS_WIDTH, VIS_HEIGHT]]);
+      
       function handleZoom(event) {
           FRAME2.attr('transform', event.transform);
       };
@@ -162,20 +167,6 @@ console.log(data);
           .call(zoom)
           .append("g");
 
-
-   
-  
-   
-  
-      // Adds the axises to the scatter plot 
-      //FRAME2.append("g")
-        //.attr("transform", "translate(" + MARGINS.left + "," + (VIS_HEIGHT + MARGINS.top) + ")")
-        //.call(d3.axisBottom(X_SCALE).ticks(10))
-            //.attr("font-size", "15px");
-      //FRAME2.append("g")
-        //.attr("transform", "translate(" + MARGINS.left + "," + (MARGINS.bottom) + ")")
-        //.call(d3.axisLeft(Y_SCALE).ticks(10))
-           // .attr("font-size", "15px");
 
 
       // create new variable for tooltip
