@@ -144,16 +144,7 @@ console.log(data);
     const Y_SCALE = d3.scaleLinear()
     .domain([69, (MIN_Y*-1)])
     .range([VIS_HEIGHT, 0]);
-
-
-     // set zoom for vis2 that calls the Zoom function
-      let zoom = d3.zoom().on('zoom', handleZoom).scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-      .extent([[0, 0], [VIS_WIDTH, VIS_HEIGHT]]);
-      
-      function handleZoom(event) {
-          FRAME2.attr('transform', event.transform);
-      };
-
+  
     // Plots the data points on to the scatter plot 
     FRAME2.selectAll("points")
           .data(data)
@@ -163,9 +154,7 @@ console.log(data);
           .attr("cy", (d) => { return (Y_SCALE(d.longitude*-1) + MARGINS.top) ; })
           .attr("r", 6)
           .attr("class", "point")
-          .style("fill", (d) => {return color(d.prim_type); })
-          .call(zoom)
-          .append("g");
+          .style("fill", (d) => {return color(d.prim_type); });
 
 
 
