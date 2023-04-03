@@ -1,5 +1,5 @@
 // create frame constants
-const FRAME_HEIGHT = 500;
+const FRAME_HEIGHT = 800;
 const FRAME_WIDTH = 800; 
 const MARGINS = {left: 150, right: 50, top: 50, bottom: 50};
 
@@ -8,14 +8,15 @@ const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right;
 
 
 
-// frame1 to append svgs to 
+// frame1 to append svgs in vis1 div
 const FRAME1 = d3.select("#vis1") 
                   .append("svg") 
                     .attr("height", FRAME_HEIGHT)   
                     .attr("width", FRAME_WIDTH)
                     .attr("class", "frame");
 
-  // create a frame to add the svg in vis2 div
+
+  // frame to add the svg in vis2 div
 const FRAME2 = d3.select("#vis2")
     .append("svg")
     .attr("height", FRAME_HEIGHT)
@@ -23,18 +24,38 @@ const FRAME2 = d3.select("#vis2")
     .attr("class", "frame")
 
 
+  // create projection to plot longititude/latitude 
+   let projection = d3.geoMercator().center([-72.02, 42])
+                    .scale(10000)
+                    .translate([VIS_WIDTH/2,VIS_HEIGHT/2]);
+
+   
+// plot geoJSON of mass
+d3.json("data/usa.json").then((data) => { 
+      
+        FRAME2.append("g").selectAll(
+                   "path").data(data.features).enter().append(
+                   "path").attr("fill", "white").attr(
+                   "d", d3.geoPath().projection(projection)).style(
+                   "stroke", "black");
+
+});
+
 
 // read in  data
 d3.csv("data/food_retailers.csv").then((data) => { 
   
-console.log(data);	
+  //log data
+  console.log(data);	
 
-  // bar chart based on establishment type
+ // create scale for colors based on store type
   const color = d3.scaleOrdinal()
                         .domain(["Convenience Stores", "Pharmacies", "Meat Markets", "Seafood Markets", "Other Specialites", "Supermarkets", "Fruit & Vegetable Markets", 
                                 "Warehouse Clubs", "Farmers Markets", "Winter Markets","Department Stores"])             
                         .range(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"]);
   
+
+  // bar chart based on establishment type
   // caulctae number of entries per establishment type
   const count = d3.rollup(data, g => g.length, d => d.prim_type);
 
@@ -66,6 +87,49 @@ console.log(data);
           .style("fill", (d) => {return color(d[0]); })
           .attr("class", "bar");
 
+      // create new variable for tooltip
+    const TOOLTIP = d3.select("#vis1")
+                          .append("div")
+                            .attr("class", "tooltip")
+                            .style("opacity", 0); 
+
+
+      // Define event handler functions for tooltips/hovering
+      function handleMouseover(event, d) {
+
+        // on mouseover, make opaque 
+        TOOLTIP.style("opacity", 1);
+
+        // change bar color
+        d3.select(this)
+          .style("fill", "red");
+
+      };
+
+      function handleMousemove(event, d) {
+
+        // position the tooltip and fill in information 
+        TOOLTIP.html("Type of Store: " + d[0] + "<br>Number of Stores: " + d[1])
+                .style("left", (event.pageX + 10) + "px") 
+                .style("top", (event.pageY - 10) + "px"); 
+       
+      };
+
+      function handleMouseleave(event, d) {
+
+        // on mouseleave, make transparant again 
+        TOOLTIP.style("opacity", 0); 
+
+        //revert to original bar color
+        d3.select(this)
+          .style("fill", (d) => {return color(d[0]);});
+      };
+
+      // Add event listeners
+      FRAME1.selectAll(".bar")
+            .on("mouseover", handleMouseover) //add event listeners
+            .on("mousemove", handleMousemove)
+            .on("mouseleave", handleMouseleave);    
 
 
    // append y axis 
@@ -84,81 +148,32 @@ console.log(data);
           .attr("font-size", '20px');
 
 
-  // create new variable for tooltip
-  const TOOLTIP = d3.select("#vis1")
-                        .append("div")
-                          .attr("class", "tooltip")
-                          .style("opacity", 0); 
 
-
-    // Define event handler functions for tooltips/hovering
-    function handleMouseover(event, d) {
-
-      // on mouseover, make opaque 
-      TOOLTIP.style("opacity", 1);
-
-      // change bar color
-      d3.select(this)
-        .style("fill", "red");
-
-    };
-
-    function handleMousemove(event, d) {
-
-      // position the tooltip and fill in information 
-      TOOLTIP.html("Type of Store: " + d[0] + "<br>Number of Stores: " + d[1])
-              .style("left", (event.pageX + 10) + "px") 
-              .style("top", (event.pageY - 10) + "px"); 
-     
-    };
-
-    function handleMouseleave(event, d) {
-
-      // on mouseleave, make transparant again 
-      TOOLTIP.style("opacity", 0); 
-
-      //revert to original bar color
-      d3.select(this)
-        .style("fill", (d) => {return color(d[0]);});
-    };
-
-    // Add event listeners
-    FRAME1.selectAll(".bar")
-          .on("mouseover", handleMouseover) //add event listeners
-          .on("mousemove", handleMousemove)
-          .on("mouseleave", handleMouseleave);    
-
-
-    // scattter plot of food establishments
-    // the max X used for scaling
-    const MAX_X = d3.max(data, (d) => { return parseFloat(d.latitude); });
-
-   // the max Y used for scaling
-    const MIN_Y = d3.min(data, (d) => { return parseFloat(d.longitude); });
-
-  // set scales for x and y
-    const X_SCALE = d3.scaleLinear()
-    .domain([(MAX_X), 41.2])
-    .range([0, VIS_WIDTH]);
-
-    const Y_SCALE = d3.scaleLinear()
-    .domain([69, (MIN_Y*-1)])
-    .range([VIS_HEIGHT, 0]);
-  
-    // Plots the data points on to the scatter plot 
+    //SECOND VIS - scatter plot
+    
+    // set zoom for vis2 that calles updateChart
+      let zoom = d3.zoom().on('zoom', handleZoom).scaleExtent([.5, 10]).extent([[0, 0], [VIS_WIDTH, VIS_HEIGHT]]);
+      function handleZoom(event) {
+          FRAME2.attr('transform', event.transform);
+      };
+      
+    
+      // Plots the data points on to the scatter plot 
     FRAME2.selectAll("points")
           .data(data)
           .enter()
           .append("circle")
-          .attr("cx", (d) => { return (X_SCALE(d.latitude) + MARGINS.left); })
-          .attr("cy", (d) => { return (Y_SCALE(d.longitude*-1) + MARGINS.top) ; })
-          .attr("r", 6)
+          .attr("cx", (d) => { return projection([d.longitude,d.latitude])[0]; })
+          .attr("cy", (d) => { return projection([d.longitude,d.latitude])[1]; })
+          .attr("r", 3)
           .attr("class", "point")
-          .style("fill", (d) => {return color(d.prim_type); });
+          .style("fill", (d) => {return color(d.prim_type); })
+          .call(zoom)
+          .append("g");
 
+    
 
-
-      // create new variable for tooltip
+    // create new variable for tooltip
         const TOOLTIP2 = d3.select("#vis2")
                               .append("div")
                                 .attr("class", "tooltip")
@@ -181,10 +196,11 @@ console.log(data);
 
       // position the tooltip and fill in information 
       TOOLTIP2.html("Store Name:" + d.name + "<br>Store Address:" + d.address +
-                    "<br> Municipal:" + d.municipal + "<br>Type of Store: " + d.prim_type )
+                    "<br> Municipal:" + d.municipal + "<br>Type of Store: " + d.prim_type)
               .style("left", (event.pageX + 10) + "px") 
               .style("top", (event.pageY - 10) + "px"); 
-     
+
+      
     };
 
     function handleMouseleave2(event, d) {
@@ -195,15 +211,18 @@ console.log(data);
       //revert to original bar color
       d3.select(this)
         .style("fill", (d) => {return color(d.prim_type);});
+
+
     };
 
-    // Add event listeners
+
+  // Add event listeners
     FRAME2.selectAll(".point")
-          .on("mouseover", handleMouseover2) //add event listeners
+          .on("mouseover", handleMouseover2) 
           .on("mousemove", handleMousemove2)
           .on("mouseleave", handleMouseleave2);    
 
-
+     
         
 });
 
