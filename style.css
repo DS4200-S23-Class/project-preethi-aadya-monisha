@@ -17,6 +17,19 @@ h1, h2, h3 {
     padding: 5px;
   }
 /* color the scatterplot points */
-.point, .point-border {
-fill:orangered;
+.point {
+    fill:orangered;
+}
+    
+.point-border {
+    stroke-width: 2px;
+    stroke: black;
+    opacity: 1;
+}
+    
+/* highlights bar */
+.selected {
+    stroke-width: 3px;
+    stroke:black;
+    opacity: 1;
 }

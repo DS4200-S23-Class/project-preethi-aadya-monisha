@@ -350,21 +350,131 @@ d3.csv("data/food_retailers.csv").then((data) => {
 
     };
 
+    // to filter by type of store
+
+    let allGroup2 = d3.group(data, (d) => d.prim_type).keys();
+    let groupArray2 = Array.from(allGroup2);
+  
+    
+      // add the options to the button
+    
+        let options2 = '';
+  
+          for (let i = 0; i < groupArray2.length; i++) {
+            options2 += '<option value="' + groupArray2[i] + '">';
+          };
+  
+       
+  
+          document.getElementById('prim_type').innerHTML = options2;
+  
+  
+      // // A function that update the chart
+       function update2() {
+  
+        let selectedGroup2 = document.getElementById("prim");
+        let str2  = String(selectedGroup2.value);
+  
+    
+      //   // Create new data with the selection?
+         let dataFilter2 = data.filter((d) => {return d.prim_type== str})
+         console.log(dataFilter2);
+  
+         g.selectAll("circle").remove();
+  
+       // Give these new data to update line
+           g.selectAll("points")
+              .data(dataFilter2)
+              .enter()
+              .append("circle")
+              .attr("cx", (d) => { return projection([d.longitude,d.latitude])[0]; })
+              .attr("cy", (d) => { return projection([d.longitude,d.latitude])[1]; })
+              .attr("r", 3)
+              .attr("class", "point")
+              .style("fill", (d) => {return color(d.municipal); })
+              
+            FRAME2.call(zoom);
+  
+             // Add event listeners
+      FRAME2.selectAll(".point")
+            .on("mouseover", handleMouseover2) 
+            .on("mousemove", handleMousemove2)
+            .on("mouseleave", handleMouseleave2);    
+  
+  
+            // caulctae number of entries per establishment type
+      let count2 = d3.rollup(dataFilter, g => g.length, d => d.mun);
+  
+      // determine max numnber
+      let nums = count.values();
+      let MAX_AMT = d3.max(nums);
+  
+        // create scale  for x scale 
+      const AMT_SCALE = d3.scaleLinear() 
+                          .domain([0, MAX_AMT + MAX_AMT/10]) 
+                          .range([0, VIS_WIDTH]); 
+  
+      // create y axis scale based on category names
+        const CATEGORY_SCALE = d3.scaleBand() 
+                    .domain(dataFilter.map((d) => { return d.prim_type; })) 
+                    .range([0, VIS_HEIGHT])
+                    .padding(.2); 
+  
+  
+      FRAME1.selectAll("rect").remove();
+        // plot bar based on data with rectangle svgs 
+      FRAME1.selectAll("bar")  
+            .data(count) 
+            .enter()  
+            .append("rect")  
+              .attr("x", MARGINS.left) 
+              .attr("y", (d) => { return CATEGORY_SCALE(d[0]) + MARGINS.bottom;}) 
+              .attr("width", (d) => { return AMT_SCALE(d[1]); })
+              .attr("height", CATEGORY_SCALE.bandwidth())
+              .style("fill", (d) => {return color(d[0]); })
+              .attr("class", "bar")
+              .call(zoom)
+              .append("g");
+  
+          FRAME1.selectAll("g").remove();
+  
+         // append y axis 
+           FRAME1.append("g") 
+                .attr("transform", "translate(" + MARGINS.left + 
+                      "," + (MARGINS.top) + ")") 
+                .call(d3.axisLeft(CATEGORY_SCALE))
+                  .attr("font-size", '10px');
+  
+          // append x axis
+      FRAME1.append("g") 
+          .attr("transform", "translate(" + (MARGINS.left) + 
+                "," + (MARGINS.bottom +VIS_HEIGHT) + ")") 
+          .call(d3.axisBottom(AMT_SCALE).ticks(10)) 
+            .attr("font-size", '20px');
+        
+        // Add event listeners
+        FRAME1.selectAll(".bar")
+              .on("mouseover", handleMouseover) //add event listeners
+              .on("mousemove", handleMousemove)
+              .on("mouseleave", handleMouseleave);    
+  
+  
+      };
 
 
      // add Event Listener to button to submit new coordinates 
-    document.getElementById("submitButton").addEventListener("click", update);
+    document.getElementById("submitButton2").addEventListener("click", update);
 
     // Add event listeners
     FRAME2.selectAll(".point")
           .on("mouseover", handleMouseover2) 
           .on("mousemove", handleMousemove2)
-          .on("mouseleave", handleMouseleave2);    
-
-   
-
-     
-        
+          .on("mouseleave", handleMouseleave2)
+          .on("click", brushSelection);    
+  
+    function brushSelection(event) {
+      this.classList.toggle('point-border')
+    }    
 });
 
 
