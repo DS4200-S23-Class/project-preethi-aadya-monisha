@@ -5,6 +5,9 @@
     <meta charset=utf-8/>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src='js/d3.v6.1.1/d3.min.js'></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+
 
     <title>Food Accessibility</title>
 </head>
@@ -91,6 +94,18 @@
     </div>
 
     <div>
+    <!--form with two dropdowns controlling x and y coordinates-->
+            <form id ='frm'>
+
+              <label>Select Municipal:</label>
+              <input list = "muncipals" id="mun">
+              <datalist id="muncipals"></datalist>
+            </form>
+
+        <button type="button" id="submitButton">Submit</button>
+    </div>
+   
+    <div>
         <h2>Latitude and Longitude of Store Locations</h2>
         <div id = 'vis2'></div>
     </div>
@@ -109,6 +124,12 @@
             <li>
                 <a href="https://d3-graph-gallery.com/graph/scatter_basic.html">D3 Scatterplot</a>
             </li>
+            <li>https://www.plus2net.com/javascript_tutorial/datalist.php</li>
+            <li>https://www.w3schools.com/jsref/jsref_string.asp</li>
+            <li>https://eric.clst.org/tech/usgeojson/</li>
+            <li>https://observablehq.com/@d3/zoom-with-tooltip</li>
+            <li>https://observablehq.com/@d3/d3-group</li>
+            <li>https://stackoverflow.com/questions/46005546/d3-v4-get-current-zoom-scale</li>
         </ul>
     </div>
 
