@@ -8,6 +8,15 @@ h1, h2, h3 {
     text-align: center;
 }
 
+/* general center class */
+.centered{
+    text-align: center;
+}
+
+form { 
+    display: inline-block; 
+}
+
 
 /* create tooltip */
 .tooltip {
@@ -25,7 +34,8 @@ h1, h2, h3 {
 .row {
     display: flex;
     flex-direction: row;
-    column-gap: 5px;
+    column-gap: 3px;
+    justify-content: space-around;
   }  
 
 
@@ -50,7 +60,7 @@ h1, h2, h3 {
 
 }
 
-/* set border for bar */
+/* set border for points/bar */
 .border {
     stroke-width: 2px;
     stroke: purple;
