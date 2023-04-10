@@ -259,7 +259,6 @@ d3.csv("data/food_retailers.csv").then((data) => {
               .style("left", (event.pageX + 10) + "px") 
               .style("top", (event.pageY - 10) + "px"); 
 
-      
     };
      
 
