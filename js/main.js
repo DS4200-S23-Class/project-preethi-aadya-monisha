@@ -401,6 +401,9 @@ d3.csv("data/food_retailers.csv").then((data) => {
 
         // add border of selected point
        this.classList.toggle("border"); 
+      
+       // remove all other borders
+        FRAME2.selectAll(".point").setAttribute("color", (d) => { return d.prim_type; });
         
         
         // border bar of same establishemnt type 
