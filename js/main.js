@@ -248,7 +248,7 @@ d3.csv("data/food_retailers.csv").then((data) => {
 
         //revert to original bar color
         d3.select(this)
-          .style("fill", (d) => {return color(d[0]);});
+          .style("fill", (d) => { return d.prim_type; }});
       };
 
     function handleMousemove2(event, d) {
@@ -402,9 +402,6 @@ d3.csv("data/food_retailers.csv").then((data) => {
         // add border of selected point
        this.classList.toggle("border"); 
       
-       // remove all other borders
-        FRAME2.selectAll(".point").setAttribute("color", (d) => { return d.prim_type; });
-        
         
         // border bar of same establishemnt type 
         FRAME1.selectAll(".bar").classed('border', (d) => {return d[0] == this.getAttribute('id');});
