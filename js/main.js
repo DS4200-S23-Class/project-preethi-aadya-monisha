@@ -199,7 +199,7 @@ d3.csv("data/food_retailers.csv").then((data) => {
 
     // set zoom for vis2 that calls handleZoom
       let zoom = d3.zoom().on('zoom', handleZoom)
-                .scaleExtent([4, 10])
+                .scaleExtent([1, 10])
                 .extent([[0, 0], [VIS_WIDTH, VIS_HEIGHT]]);
      
 
