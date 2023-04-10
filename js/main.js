@@ -248,7 +248,7 @@ d3.csv("data/food_retailers.csv").then((data) => {
 
         //revert to original bar color
         d3.select(this)
-          .style("fill", (d) => { return d.prim_type; }});
+          .style("fill", (d) => { return color(d.prim_type); });
       };
 
     function handleMousemove2(event, d) {
